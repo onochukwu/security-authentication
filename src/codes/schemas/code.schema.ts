@@ -2,12 +2,14 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class Code extends Document {
+export class Code 
+{  declare _id: Types.ObjectId;
+
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   user: Types.ObjectId;
 
   @Prop({ required: true })
-  code: string; // store plain for this starter; consider hashing in production
+  code: string;
 
   @Prop({ default: false })
   used: boolean;

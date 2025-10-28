@@ -5,6 +5,10 @@ import { Code } from './schemas/code.schema';
 import * as crypto from 'crypto';
 import { UsersService } from '../users/users.service';
 import { LogsService } from '../logs/logs.service';
+import { Document, Types } from 'mongoose';
+
+export type CodeDocument = Code & Document;
+
 
 @Injectable()
 export class CodesService {
@@ -15,7 +19,7 @@ export class CodesService {
   ) {}
 
   private generateToken() {
-    // 6-character alphanumeric
+   
     return crypto.randomBytes(3).toString('hex').toUpperCase();
   }
 

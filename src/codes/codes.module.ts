@@ -1,18 +1,22 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Code, CodeSchema } from './schemas/code.schema';
 import { CodesService } from './codes.service';
 import { CodesController } from './codes.controller';
-import { UsersModule } from '../users/users.module';
+import { Code, CodeSchema } from './schemas/code.schema';
 import { LogsModule } from '../logs/logs.module';
+import { UsersModule } from '../users/users.module';
+import { AuthModule } from '../auth/auth.module'; 
+import { AdminGuard } from '../admin/admin.guard'; 
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Code.name, schema: CodeSchema }]),
-    UsersModule,
     LogsModule,
+    UsersModule,
+    AuthModule, 
   ],
-  providers: [CodesService],
+  providers: [CodesService, AdminGuard], 
   controllers: [CodesController],
+  exports: [CodesService],
 })
 export class CodesModule {}

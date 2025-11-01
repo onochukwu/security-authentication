@@ -5,6 +5,8 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CodesModule } from './codes/codes.module';
 import { LogsModule } from './logs/logs.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { LogsModule } from './logs/logs.module';
     AuthModule,
     CodesModule,
     LogsModule,
+    ScheduleModule.forRoot(),
+    AdminModule,
   ],
 })
 export class AppModule {}

@@ -13,7 +13,11 @@ export class User extends Document {
   email: string;
 
   @Prop({ required: true })
-  password: string; // hashed
+  password: string;
+
+  @Prop({ default: 'user' })
+    role: string;
+  
 
 }
 

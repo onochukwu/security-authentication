@@ -1,22 +1,31 @@
-import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt.guard';
 import { CodesService } from './codes.service';
-import { AuthGuard } from '@nestjs/passport';
+import { UsersService } from '../users/users.service';
+import { AdminGuard } from '../admin/admin.guard';
 
 @Controller('codes')
 export class CodesController {
-  constructor(private codesService: CodesService) {}
+  constructor(
+    private readonly codesService: CodesService,
+    private readonly usersService: UsersService,
+  ) {}
 
-  // Generate a code for the logged-in user
-  @UseGuards(AuthGuard('jwt'))
+ 
+  @UseGuards(JwtAuthGuard)
   @Post('generate')
-  async generate(@Req() req: any) {
-    const userId = req.user.userId;
-    return this.codesService.generateForUser(userId);
+  async generate(@Req() req) {
+    const user = await this.usersService.findByEmail(req.user.email);
+    if (!user) return { message: 'User not found' };
+
+    const code = await this.codesService.generateForUser(user._id.toString());
+    return code;
   }
 
-  // Admin / security verifies a code. This endpoint can be public or protected depending on your flow.
+  @UseGuards(AdminGuard)
   @Post('verify')
-  async verify(@Body() body: { code: string; verifiedBy?: string }) {
-    return this.codesService.verify(body.code, body.verifiedBy || 'anonymous');
+  async verify(@Body() body: { code: string }, @Req() req) {
+    const admin = req.admin; 
+    return this.codesService.verify(body.code, admin.email);
   }
 }

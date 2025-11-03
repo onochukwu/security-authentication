@@ -20,14 +20,12 @@ export class AdminService {
       name,
       email,
       password: hash,
-      role: 'admin',
     });
 
     return {
       id: admin._id,
       name: admin.name,
       email: admin.email,
-      role: admin.role,
     };
   }
 
@@ -42,7 +40,6 @@ export class AdminService {
     const payload = {
       sub: (admin._id as any).toString(),
       email: admin.email,
-      role: 'admin',
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET || 'secret', {

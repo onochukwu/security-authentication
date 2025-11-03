@@ -4,6 +4,6 @@ import { Controller, Get } from '@nestjs/common';
 export class AppController {
   @Get()
   getHello() {
-    return { message: 'OLERA backend is running' };
+    return { message: 'OLERA is running' };
   }
 }

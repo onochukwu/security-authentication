@@ -15,7 +15,7 @@ export class AuthService {
   async login(email: string, password: string) {
     const user = await this.usersService.findByEmail(email);
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Email or password not correct');
     }
     const payload = { sub: user._id, email: user.email };
     return { access_token: this.jwtService.sign(payload) };

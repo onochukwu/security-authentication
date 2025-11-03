@@ -26,7 +26,7 @@ export class CodesService {
 
  
   private generateToken(): string {
-    return crypto.randomBytes(3).toString('hex').toUpperCase(); // e.g. 'A1B2C3'
+    return crypto.randomBytes(3).toString('hex').toUpperCase(); // code will be alphanumeric e.g. 'A1B2C3'
   }
 
   
@@ -84,8 +84,8 @@ export class CodesService {
     };
   }
 
-  
-  @Cron('0 */6 * * *') // every 6 hours
+
+  @Cron('0 */6 * * *') // Reset code every 6 hours
   async regenerateDailyCodes() {
     this.logger.log('Running code regeneration task...');
 

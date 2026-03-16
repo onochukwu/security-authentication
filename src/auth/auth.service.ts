@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
@@ -13,7 +18,6 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
- 
   async signup(dto: SignupDto) {
     const existingUser = await this.usersService.findByEmail(dto.email);
     if (existingUser) throw new BadRequestException('Email already in use');
@@ -25,7 +29,10 @@ export class AuthService {
       password: hashed,
     });
 
-    return { message: 'User registered successfully', user };
+    return {
+      message: 'Registration submitted. Please wait for admin approval before logging in.',
+      userId: user._id,
+    };
   }
 
   async login(dto: LoginDto) {
@@ -35,7 +42,18 @@ export class AuthService {
     const passwordValid = await bcrypt.compare(dto.password, user.password);
     if (!passwordValid) throw new UnauthorizedException('Invalid email or password');
 
-    const payload = { sub: user._id.toString(), email: user.email };
+    if (user.status === 'pending') {
+      throw new ForbiddenException('Your account is pending admin approval');
+    }
+    if (user.status === 'rejected') {
+      throw new ForbiddenException('Your account has been rejected by the admin');
+    }
+    if (!user.isActive) {
+      throw new ForbiddenException('Your account has been deactivated');
+    }
+
+    const payload = { sub: user._id.toString(), email: user.email, role: user.role };
     return { access_token: this.jwtService.sign(payload) };
   }
 }
+
